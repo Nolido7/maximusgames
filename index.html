@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bem-vindo ao Meu Servidor</title>
+</head>
+<body>
+    <h1>Bem-vindo ao Meu Servidor</h1>
+
+    <form id="nameForm">
+        <label for="name">Digite seu nome:</label>
+        <input type="text" id="name" required>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div id="welcomeMessage" style="display: none;"></div>
+
+    <script>
+        document.getElementById("nameForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const name = document.getElementById("name").value;
+            const welcomeMessage = document.getElementById("welcomeMessage");
+            welcomeMessage.textContent = `Bem-vindo, ${name}! Obrigado por acessar meu servidor, este servidor foi desenvolvido por max odilon e esta em fase de teste.`;
+            welcomeMessage.style.display = "block";
+        });
+    </script>
+</body>
+</html>
+
+
+<h1> SERVIDOR PRIVADO DE NOLIDO, APENAS O ESCOLHIDO POR MAX ODILON IRA PODER TESTAR O SERVIDOR! </h1>
+
+
+
+<h1> TESTE MEUS PROJETOS ABAIXO </h1>
+<body>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo da Velha</title>
+    <style>
+        /* Estilos para o tabuleiro do jogo */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 2px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+
+        /* Estilos para o vencedor */
+        #winner {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo da Velha</h1>
+    <div class="board" id="board">
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+    </div>
+
+    <div id="winner"></div>
+    <button onclick="resetGame()">Reiniciar</button>
+
+    <script>
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function makeMove(cell) {
+            const cellIndex = Array.from(document.querySelectorAll('.cell')).indexOf(cell);
+
+            if (gameBoard[cellIndex] === '' && gameActive) {
+                cell.innerHTML = currentPlayer;
+                gameBoard[cellIndex] = currentPlayer;
+                checkWinner();
+                currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+            }
+        }
+
+        function checkWinner() {
+            for (let pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                    document.getElementById('winner').textContent = `O jogador ${gameBoard[a]} venceu!`;
+                    gameActive = false;
+                    break;
+                }
+            }
+
+            if (!gameBoard.includes('') && gameActive) {
+                document.getElementById('winner').textContent = 'Empate!';
+                gameActive = false;
+            }
+        }
+
+        function resetGame() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.innerHTML = '';
+            });
+            document.getElementById('winner').textContent = '';
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            currentPlayer = 'X';
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo da Cobrinha</title>
+    <style>
+        /* Estilos para o tabuleiro do jogo */
+        #snake-board {
+            width: 300px;
+            height: 300px;
+            border: 1px solid #000;
+            position: relative;
+        }
+
+        /* Estilos para a cobra e comida */
+        .snake {
+            width: 10px;
+            height: 10px;
+            background-color: black;
+            position: absolute;
+        }
+
+        .food {
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo da Cobrinha</h1>
+    <div id="snake-board"></div>
+    <button onclick="startGame()">Iniciar</button>
+    <button onclick="restartGame()">Reiniciar</button>
+    <button onclick="moveSnake('up')">CIMA</button>
+    <button onclick="moveSnake('down')">BAIXO</button>
+    <button onclick="moveSnake('left')">ESQUERDA</button>
+    <button onclick="moveSnake('right')">DIREITA</button>
+
+    <script>
+        const snakeBoard = document.getElementById('snake-board');
+        const gridSize = 20;
+        let snake = [{ x: 5, y: 5 }]; // Inicialização da cobra
+        let food = { x: 10, y: 10 }; // Posição inicial da comida
+        let direction = 'right'; // Direção inicial da cobra
+        let gameInterval;
+
+        // Função para criar elementos no tabuleiro
+        function createGameElement(type, x, y) {
+            const element = document.createElement('div');
+            element.className = type;
+            element.style.left = x * gridSize + 'px';
+            element.style.top = y * gridSize + 'px';
+            return element;
+        }
+
+        // Função para gerar uma nova posição para a comida
+        function generateFoodPosition() {
+            const x = Math.floor(Math.random() * (snakeBoard.clientWidth / gridSize));
+            const y = Math.floor(Math.random() * (snakeBoard.clientHeight / gridSize));
+            food = { x, y };
+        }
+
+        // Função para atualizar o jogo
+        function updateGame() {
+            // Obter a posição da cabeça da cobra
+            const head = { ...snake[0] };
+
+            // Atualizar a posição da cabeça com base na direção
+            if (direction === 'up') {
+                head.y -= 1;
+            } else if (direction === 'down') {
+                head.y += 1;
+            } else if (direction === 'left') {
+                head.x -= 1;
+            } else if (direction === 'right') {
+                head.x += 1;
+            }
+
+            // Verificar se a cobra colidiu com a parede
+            if (head.x < 0 || head.x * gridSize >= snakeBoard.clientWidth ||
+                head.y < 0 || head.y * gridSize >= snakeBoard.clientHeight) {
+                alert('voce perdeu! clique em reiniciar e tente novamente.');
+                clearInterval(gameInterval);
+                return;
+            }
+
+            // Verificar se a cobra comeu a comida
+            if (head.x === food.x && head.y === food.y) {
+                generateFoodPosition();
+            } else {
+                // Se não comeu a comida, remova a cauda da cobra para movê-la
+                snake.pop();
+            }
+
+            // Verificar se a cobra colidiu com seu próprio corpo
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    alert('Você perdeu! Clique em Reiniciar para jogar novamente.');
+                    clearInterval(gameInterval);
+                    return;
+                }
+            }
+
+            // Adicionar a nova posição da cabeça no início da cobra
+            snake.unshift(head);
+
+            // Atualizar a tela
+            draw();
+        }
+
+        // Função para desenhar a cobra e a comida na tela
+        function draw() {
+            // Limpar o tabuleiro
+            snakeBoard.innerHTML = '';
+
+            // Desenhar a cobra
+            snake.forEach(segment => {
+                snakeBoard.appendChild(createGameElement('snake', segment.x, segment.y));
+            });
+
+            // Desenhar a comida
+            snakeBoard.appendChild(createGameElement('food', food.x, food.y));
+        }
+
+        // Função para mover a cobra com base na direção
+        function moveSnake(newDirection) {
+            // Lógica para alterar a direção da cobra
+            direction = newDirection;
+        }
+
+        // Iniciar o jogo
+        function startGame() {
+            clearInterval(gameInterval);
+            snake = [{ x: 5, y: 5 }]; // Reiniciar a cobra
+            direction = 'right';
+            generateFoodPosition();
+            gameInterval = setInterval(updateGame, 300);
+        }
+
+        // Reiniciar o jogo
+        function restartGame() {
+            clearInterval(gameInterval);
+            snake = [{ x: 5, y: 5 }]; // Reiniciar a cobra
+            direction = 'right';
+            generateFoodPosition();
+            gameInterval = setInterval(updateGame, 300);
+        }
+
+        // Chame startGame inicialmente para permitir que o jogador comece o jogo
+        startGame();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Forca</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Jogo da Forca</h1>
+    <div id="word-display"></div>
+    <div id="incorrect-letters"></div>
+    <div id="hangman-image"></div>
+    <input type="text" id="guess-input" maxlength="1">
+    <button onclick="makeGuess()">Adivinhar</button>
+    <button onclick="restartGame()">Reiniciar</button>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
